@@ -325,6 +325,9 @@ void TCommandExportToS3::Config(TConfig& config) {
             << " - Path-Style URL")
         .RequiredArgument("BOOL").StoreResult<bool>(&UseVirtualAddressing).DefaultValue("true");
 
+    config.Opts->AddLongOption("materialize-indexes", "")
+        .RequiredArgument("BOOL").StoreResult<bool>(&MaterializeIndexes).DefaultValue("false");
+
     {
         TStringBuilder encryptionAlgorithmHelp;
         encryptionAlgorithmHelp << "Encryption algorithm. Supported values: ";
@@ -418,6 +421,7 @@ int TCommandExportToS3::Run(TConfig& config) {
     settings.AccessKey(AwsAccessKey);
     settings.SecretKey(AwsSecretKey);
     settings.UseVirtualAddressing(UseVirtualAddressing);
+    settings.MaterializeIndexes(MaterializeIndexes);
 
     for (const auto& item : Items) {
         settings.AppendItem({item.Source, item.Destination});

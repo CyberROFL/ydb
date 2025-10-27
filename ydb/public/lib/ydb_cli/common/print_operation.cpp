@@ -165,6 +165,7 @@ namespace {
 
         if constexpr (std::is_same_v<NExport::TExportToS3Response, T>) {
             freeText << "StorageClass: " << settings.StorageClass_ << Endl;
+            freeText << "Materialize indexes: " << (settings.MaterializeIndexes_ ? "true" : "false") << Endl;
             if (settings.Compression_) {
                 freeText << "Compression: " << *settings.Compression_ << Endl;
             }

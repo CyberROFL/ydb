@@ -2870,6 +2870,7 @@ struct TExportInfo: public TSimpleRefCount<TExportInfo> {
         TString SourcePathName;
         TPathId SourcePathId;
         NKikimrSchemeOp::EPathType SourcePathType;
+        ui32 ParentIdx; // used by indexes
 
         EState State = EState::Waiting;
         ESubState SubState = ESubState::AllocateTxId;
@@ -2879,10 +2880,15 @@ struct TExportInfo: public TSimpleRefCount<TExportInfo> {
 
         TItem() = default;
 
-        explicit TItem(const TString& sourcePathName, const TPathId sourcePathId, NKikimrSchemeOp::EPathType sourcePathType)
+        explicit TItem(
+                const TString& sourcePathName,
+                const TPathId sourcePathId,
+                NKikimrSchemeOp::EPathType sourcePathType,
+                ui32 parentIdx = Max<ui32>())
             : SourcePathName(sourcePathName)
             , SourcePathId(sourcePathId)
             , SourcePathType(sourcePathType)
+            , ParentIdx(parentIdx)
         {
         }
 
@@ -2922,6 +2928,7 @@ struct TExportInfo: public TSimpleRefCount<TExportInfo> {
 
     bool EnableChecksums = false;
     bool EnablePermissions = false;
+    bool MaterializeIndexes = false;
 
     NKikimrSchemeOp::TExportMetadata ExportMetadata;
     TActorId ExportMetadataUploader;

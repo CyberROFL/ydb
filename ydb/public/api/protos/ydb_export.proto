@@ -139,6 +139,9 @@ message ExportToS3Settings {
     // If encryption_settings field is not specified,
     // the resulting data will not be encrypted.
     EncryptionSettings encryption_settings = 15;
+
+    // TODO
+    bool materialize_indexes = 16;
 }
 
 message ExportToS3Result {

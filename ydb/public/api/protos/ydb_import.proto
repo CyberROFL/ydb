@@ -61,6 +61,12 @@ message ImportFromS3Settings {
         string destination_path = 2;
     }
 
+    enum IndexFillingMode {
+        INDEX_FILLING_MODE_AUTO = 0;
+        INDEX_FILLING_MODE_BUILD = 1;
+        INDEX_FILLING_MODE_IMPORT = 2;
+    }
+
     string endpoint = 1 [(required) = true];
     Scheme scheme = 2; // HTTPS if not specified
     string bucket = 3 [(required) = true];
@@ -99,6 +105,9 @@ message ImportFromS3Settings {
     // If encryption_settings field is not specified,
     // the resulting data is considered not encrypted.
     Ydb.Export.EncryptionSettings encryption_settings = 15;
+
+    // TODO
+    IndexFillingMode index_filling_mode = 16;
 }
 
 message ImportFromS3Result {

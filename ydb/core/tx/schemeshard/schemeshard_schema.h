@@ -1250,6 +1250,7 @@ struct Schema : NIceDb::Schema {
 
         struct EnableChecksums : Column<17, NScheme::NTypeIds::Bool> {};
         struct EnablePermissions : Column<18, NScheme::NTypeIds::Bool> {};
+        struct MaterializeIndexes : Column<21, NScheme::NTypeIds::Bool> {};
 
         struct ExportMetadata : Column<19, NScheme::NTypeIds::String> { using Type = NKikimrSchemeOp::TExportMetadata; };
 
@@ -1274,7 +1275,8 @@ struct Schema : NIceDb::Schema {
             EnableChecksums,
             EnablePermissions,
             ExportMetadata,
-            SanitizedToken
+            SanitizedToken,
+            MaterializeIndexes
         >;
     };
 
@@ -1289,6 +1291,7 @@ struct Schema : NIceDb::Schema {
         struct Issue : Column<7, NScheme::NTypeIds::Utf8> {};
         struct SourceOwnerPathId : Column<8, NScheme::NTypeIds::Uint64> { using Type = TOwnerId; };
         struct SourcePathType : Column<9, NScheme::NTypeIds::Uint32> { using Type = NKikimrSchemeOp::EPathType; static constexpr Type Default = NKikimrSchemeOp::EPathTypeTable; };
+        struct ParentIndex : Column<10, NScheme::NTypeIds::Uint32> {};
 
         using TKey = TableKey<ExportId, Index>;
         using TColumns = TableColumns<
@@ -1300,7 +1303,8 @@ struct Schema : NIceDb::Schema {
             BackupTxId,
             Issue,
             SourceOwnerPathId,
-            SourcePathType
+            SourcePathType,
+            ParentIndex
         >;
     };
 

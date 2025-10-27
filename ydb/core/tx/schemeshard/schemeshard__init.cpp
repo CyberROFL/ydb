@@ -4445,6 +4445,7 @@ struct TSchemeShard::TTxInit : public TTransactionBase<TSchemeShard> {
                     exportInfo->EndTime = TInstant::Seconds(rowset.GetValueOrDefault<Schema::Exports::EndTime>());
                     exportInfo->EnableChecksums = rowset.GetValueOrDefault<Schema::Exports::EnableChecksums>(false);
                     exportInfo->EnablePermissions = rowset.GetValueOrDefault<Schema::Exports::EnablePermissions>(false);
+                    exportInfo->MaterializeIndexes = rowset.GetValueOrDefault<Schema::Exports::MaterializeIndexes>(false);
 
                     if (rowset.HaveValue<Schema::Exports::ExportMetadata>()) {
                         exportInfo->ExportMetadata = rowset.GetValue<Schema::Exports::ExportMetadata>();
@@ -4494,6 +4495,7 @@ struct TSchemeShard::TTxInit : public TTransactionBase<TSchemeShard> {
                     item.SourcePathId.OwnerId = rowset.GetValueOrDefault<Schema::ExportItems::SourceOwnerPathId>(selfId);
                     item.SourcePathId.LocalPathId = rowset.GetValue<Schema::ExportItems::SourcePathId>();
                     item.SourcePathType = rowset.GetValue<Schema::ExportItems::SourcePathType>();
+                    item.ParentIdx = rowset.GetValueOrDefault<Schema::ExportItems::ParentIndex>(Max<ui32>());
 
                     item.State = static_cast<TExportInfo::EState>(rowset.GetValue<Schema::ExportItems::State>());
                     item.WaitTxId = rowset.GetValueOrDefault<Schema::ExportItems::BackupTxId>(InvalidTxId);
