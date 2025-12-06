@@ -406,6 +406,9 @@ class TSchemeGetter: public TGetterFromS3<TSchemeGetter> {
             << ", result# " << result);
 
         if (NoObjectFound(result.GetError().GetErrorType())) {
+            Y_ABORT_UNLESS(ItemIdx < ImportInfo->Items.size());
+            auto& item = ImportInfo->Items.at(ItemIdx);
+            item.MaterializedIndexes.clear();
             return StartDownloadingChangefeeds();
         } else if (!CheckResult(result, "HeadObject")) {
             return;
@@ -830,7 +833,13 @@ class TSchemeGetter: public TGetterFromS3<TSchemeGetter> {
                         }
 
                         const TVector<TString> indexColumns(index.index_columns().begin(), index.index_columns().end());
-                        for (const auto& implTable : NTableIndex::GetImplTables(*indexType, indexColumns)) {
+                        std::optional<Ydb::Table::FulltextIndexSettings::Layout> layout;
+                        if (*indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltext) {
+                            const auto& settings = index.global_fulltext_index().fulltext_settings();
+                            layout = settings.has_layout() ? settings.layout() : Ydb::Table::FulltextIndexSettings::LAYOUT_UNSPECIFIED;
+                        }
+
+                        for (const auto& implTable : NTableIndex::GetImplTables(*indexType, indexColumns, layout)) {
                             const TString implTablePrefix = TStringBuilder() << index.name() << "/" << implTable;
                             IndexImplTablePrefixes.push_back({implTablePrefix, implTablePrefix});
                         }

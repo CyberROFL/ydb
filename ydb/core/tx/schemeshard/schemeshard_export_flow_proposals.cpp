@@ -252,7 +252,13 @@ THolder<TEvSchemeShard::TEvModifySchemeTransaction> BackupPropose(
                             }
 
                             const TVector<TString> indexColumns(index.GetKeyColumnNames().begin(), index.GetKeyColumnNames().end());
-                            for (const auto& implTable : NTableIndex::GetImplTables(index.GetType(), indexColumns)) {
+                            std::optional<Ydb::Table::FulltextIndexSettings::Layout> layout;
+                            if (index.GetType() == NKikimrSchemeOp::EIndexTypeGlobalFulltext) {
+                                const auto& settings = index.GetFulltextIndexDescription().GetSettings();
+                                layout = settings.has_layout() ? settings.layout() : Ydb::Table::FulltextIndexSettings::LAYOUT_UNSPECIFIED;
+                            }
+
+                            for (const auto& implTable : NTableIndex::GetImplTables(index.GetType(), indexColumns, layout)) {
                                 if (implTable != implTableName) {
                                     ++idx;
                                     continue;

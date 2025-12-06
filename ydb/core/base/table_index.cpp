@@ -153,7 +153,7 @@ std::optional<NKikimrSchemeOp::EIndexType> TryConvertIndexType(Ydb::Table::Table
 
 NKikimrSchemeOp::EIndexType ConvertIndexType(Ydb::Table::TableIndex::TypeCase type) {
     const auto result = TryConvertIndexType(type);
-    Y_ABORT_UNLESS(result);
+    Y_ENSURE(result);
     return *result;
 }
 
@@ -256,7 +256,11 @@ bool DoesIndexSupportTTL(NKikimrSchemeOp::EIndexType indexType) {
     }
 }
 
-std::span<const std::string_view> GetImplTables(NKikimrSchemeOp::EIndexType indexType, std::span<const TString> indexKeys) {
+std::span<const std::string_view> GetImplTables(
+        NKikimrSchemeOp::EIndexType indexType,
+        std::span<const TString> indexKeys,
+        std::optional<Ydb::Table::FulltextIndexSettings::Layout> layout)
+{
     switch (indexType) {
         case NKikimrSchemeOp::EIndexTypeGlobal:
         case NKikimrSchemeOp::EIndexTypeGlobalAsync:
@@ -268,6 +272,9 @@ std::span<const std::string_view> GetImplTables(NKikimrSchemeOp::EIndexType inde
             } else {
                 return PrefixedGlobalKMeansTreeImplTables;
             }
+        case NKikimrSchemeOp::EIndexTypeGlobalFulltext:
+            Y_ENSURE(layout);
+            return GetFulltextImplTables(*layout);
         default:
             Y_ENSURE(false, InvalidIndexType(indexType));
     }
