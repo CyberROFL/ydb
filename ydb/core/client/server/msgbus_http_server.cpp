@@ -7,6 +7,7 @@
 #include <ydb/core/mon/mon.h>
 #include <ydb/core/base/ticket_parser.h>
 #include <util/generic/yexception.h>
+#include <util/system/event.h>
 
 #define YDB_LOG_THIS_FILE_COMPONENT NActorsServices::HTTP
 
@@ -120,7 +121,7 @@ protected:
     NMonitoring::IMonHttpRequest& Request;
     const TProtocol& Protocol;
     const NBus::TBusServerSessionConfig& Config;
-    TSystemEvent DoneEvent;
+    TManualEvent DoneEvent;
     bool ReplySent;
 };
 
